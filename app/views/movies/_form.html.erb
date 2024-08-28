@@ -11,25 +11,36 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :title, style: "display: block" %>
-    <%= form.text_field :title %>
-  </div>
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Title</th>
+      <th scope="col">Rating</th>
+      <th scope="col">Release Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row"><%= form.label :title, style: "display: block" %> <%= form.text_field :title %> </th>
+      <td> <%= form.label :rating, style: "display: block" %> <%= form.text_field :rating %></td>
+      <td> <%= form.label :release_date, style: "display: block" %> <%= form.text_field :release_date %></td>
+    </tr>
+  </tbody>
+</table>
+  # <div>
+  #   <%= form.label :title, style: "display: block" %>
+  #   <%= form.text_field :title %>
+  # </div>
 
-  <div>
-    <%= form.label :rating, style: "display: block" %>
-    <%= form.text_field :rating %>
-  </div>
+  # <div>
+  #   <%= form.label :rating, style: "display: block" %>
+  #   <%= form.text_field :rating %>
+  # </div>
 
-  <div>
-    <%= form.label :description, style: "display: block" %>
-    <%= form.text_field :description %>
-  </div>
-
-  <div>
-    <%= form.label :release_date, style: "display: block" %>
-    <%= form.text_field :release_date %>
-  </div>
+  # <div>
+  #   <%= form.label :release_date, style: "display: block" %>
+  #   <%= form.text_field :release_date %>
+  # </div>
 
   <div>
     <%= form.submit %>
