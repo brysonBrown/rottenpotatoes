@@ -2,15 +2,30 @@
 
 <% content_for :title, "Movies" %>
 
+
+<style>
+ th{
+    width: 25ch;
+    text-align: center;
+ }
+ </style>
 <h1>Movies</h1>
 
+<table>
+    <thead>
+      <tr>
+          <th scope="col"><strong>Title</strong></th>
+          <th scope="col"><strong>Rating</strong></th>
+          <th scope="col"><strong>Release Date</strong></th>
+      </tr>
+    </thead>
+<table>
 <div id="movies">
   <% @movies.each do |movie| %>
     <%= render movie %>
-    <p>
-      <%= link_to "Show this movie", movie %>
-    </p>
   <% end %>
 </div>
 
 <%= link_to "New movie", new_movie_path %>
+
+<%= button_to 'Sort Date Ascending' %>

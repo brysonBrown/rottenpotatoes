@@ -6,6 +6,21 @@ class MoviesController < ApplicationController
     @movies = Movie.all
   end
 
+  def sort_title
+    @movie.sort_title_ascending
+    format.html { redirect_to movie_url(@movie)}
+  end
+
+  def sort_date
+    @movie.sort_date_ascending
+    format.html { redirect_to movie_url(@movie)}
+  end
+
+  def sort_rating
+    @movie.sort_rating_ascending
+    format.html { redirect_to movie_url(@movie)}
+  end
+
   # GET /movies/1 or /movies/1.json
   def show
   end
