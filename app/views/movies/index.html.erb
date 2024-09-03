@@ -2,20 +2,26 @@
 
 <!--
     Prompt:
-    I want a button to change the color of a column in CSS. I provided the code in my `index.html.erb` and `_movie.html.erb` files. I wanted the button's color change to reflect the 
-    column sorting direction (ascending or descending) and apply distinct colors for each column. Additionally, I wanted to restore the grid look that was originally present. Here is my code [long so I am commenting on changes]
-    Prompt2: I had to then ask it to make sure that this worked when I pressed a button and not just on a page refresh abotu 4 times. 
-    
-    This solution includes:
+    I want a button to change the color of a column in CSS. I provided the code in my `index.html.erb` and `_movie.html.erb` files. I want the button color change to reflect the 
+    column sorting direction (ascending or descending) and apply distinct colors for each column. I want these color changes to happen based on the url. For example, sort_title_ascending has a url that ends with sort_title_ascending
+    and sort_release_date_ascending has a url that ends with sort_release_date_ascending. Here is my code [long so I am commenting on changes]
+    Prompt2: "It only works when I refresh the page. Make it work when the button is pressed even if the page is not refreshed"
+    Prompt3: "Make the entire column the color and not just the column title"
+    Prompt4: "Here is the java script that adds color to the columns. Make it add a carrot (^) for ascending and an astrick (*) for descending to the title
+    of the sorted column."
+    Contributing Prompts: I had to tell it to repeat itself on each step a dozen times with input on error messages/what I thought was wrong. The main prompts are
+    the ones listed. 
+
+    chatGPT additions include:
     - CSS updates for grid layout and column highlight colors.
-    - JavaScript for dynamic highlighting based on sorting direction.
+    - JavaScript for dynamic highlighting based on sorting direction and adding a symbol.
+    - Reformatting of table code
+
 -->
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movies</title>
-    <!-- CSS highlights from chatGPT -->
+    <!-- CSS highlights from chatGPT, with some modified for better colors -->
     <style>
       /* CSS styles */
       table {
@@ -62,7 +68,7 @@
               <th scope="col" data-column="release_date"><strong>Release Date</strong></th>
           </tr>
         </thead>
-        <!-- chatGPT just reformatted this so that it called the movie file here inside of one table-->
+        <!-- chatGPT just reformatted this so that it called the movie file here inside of one table instead of outside of it-->
         <tbody>
           <% @movies.each do |movie| %>
             <%= render movie %>
@@ -70,9 +76,10 @@
         </tbody>
     </table>
 
+    <!-- These are the links -->
     <%= link_to "New movie", new_movie_path %>
 
-    <!-- Buttons -->
+    <!-- These are the buttons -->
     <%= button_to "Sort by Title Ascending", sort_title_ascending_path, method: :get %> <br>
     <%= button_to "Sort by Title Descending", sort_title_descending_path, method: :get %> <br>
     <%= button_to "Sort by Rating Ascending", sort_rating_ascending_path, method: :get %> <br>
@@ -80,7 +87,7 @@
     <%= button_to "Sort by Release Date Ascending", sort_release_date_ascending_path, method: :get %> <br>
     <%= button_to "Sort by Release Date Descending", sort_release_date_descending_path, method: :get %> <br>
 
-    <!-- JavaScript from chatGPT, highlights columns on button push.-->
+    <!-- JavaScript from chatGPT, highlights columns on button push. Prompts at the top-->
     <!-- JavaScript code -->
       <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -100,37 +107,58 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateHighlight(column, direction) {
         let highlightClass = '';
+        let sortSymbol = '';
         switch (column) {
             case 'title':
                 highlightClass = direction === 'ascending' ? 'highlight-title-asc' : 'highlight-title-desc';
+                sortSymbol = direction === 'ascending' ? ' ^' : ' *';
                 break;
             case 'rating':
                 highlightClass = direction === 'ascending' ? 'highlight-rating-asc' : 'highlight-rating-desc';
+                sortSymbol = direction === 'ascending' ? ' ^' : ' *';
                 break;
             case 'release_date':
                 highlightClass = direction === 'ascending' ? 'highlight-release_date-asc' : 'highlight-release_date-desc';
+                sortSymbol = direction === 'ascending' ? ' ^' : ' *';
                 break;
             default:
                 highlightClass = '';
+                sortSymbol = '';
         }
 
         console.log('Highlight Class:', highlightClass);
+        console.log('Sort Symbol:', sortSymbol);
 
-        // Remove existing highlight classes from all column headers and cells
-        document.querySelectorAll('#moviesTable th, #moviesTable td').forEach(cell => {
-            cell.classList.remove('highlight-title-asc', 'highlight-title-desc', 'highlight-rating-asc', 'highlight-rating-desc', 'highlight-release_date-asc', 'highlight-release_date-desc');
+        // Remove existing highlight classes and symbols
+        document.querySelectorAll('#moviesTable th').forEach(header => {
+            header.classList.remove(
+                'highlight-title-asc', 'highlight-title-desc',
+                'highlight-rating-asc', 'highlight-rating-desc',
+                'highlight-release_date-asc', 'highlight-release_date-desc'
+            );
+            // Remove existing symbols
+            header.textContent = header.textContent.replace(/[\s^*]+$/, '');
+        });
+
+        document.querySelectorAll('#moviesTable td').forEach(cell => {
+            cell.classList.remove(
+                'highlight-title-asc', 'highlight-title-desc',
+                'highlight-rating-asc', 'highlight-rating-desc',
+                'highlight-release_date-asc', 'highlight-release_date-desc'
+            );
         });
 
         // Apply the class to the appropriate column header and cells
         if (highlightClass) {
-            // Highlight header
+            // Highlight header and add sort symbol
             document.querySelectorAll(`#moviesTable th[data-column="${column}"]`).forEach(header => {
                 header.classList.add(highlightClass);
+                header.textContent += sortSymbol; // Append symbol directly
             });
 
             // Determine the column index
             const columnIndex = [...document.querySelectorAll('#moviesTable th')].findIndex(th => th.dataset.column === column) + 1;
-            
+
             // Highlight column cells using nth-child
             document.querySelectorAll(`#moviesTable td:nth-child(${columnIndex})`).forEach(cell => {
                 cell.classList.add(highlightClass);
@@ -146,21 +174,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Apply highlight on initial page load
     applyHighlight();
 
-    // Listen for URL changes using history events
-    window.addEventListener('popstate', function() {
-        applyHighlight();
-    });
-
-    // Optional: Use MutationObserver if URL changes dynamically without a full page reload
-    const observer = new MutationObserver(() => {
-        applyHighlight();
-    });
-    observer.observe(document, { subtree: true, childList: true });
-
     // Handle URL changes manually if you use client-side routing or similar
-    window.addEventListener('load', applyHighlight);
+    window.addEventListener('popstate', applyHighlight);
+
+    // Handle AJAX navigation or URL changes
+    document.addEventListener('click', function(event) {
+        if (event.target.matches('button')) {
+            // Simulate a button click that changes the URL
+            setTimeout(applyHighlight, 100); // Adjust timeout if needed
+        }
+    });
+
+    // Optionally, use MutationObserver to observe changes
+    // Uncomment if needed
+    // const observer = new MutationObserver(applyHighlight);
+    // observer.observe(document.body, { subtree: true, childList: true });
 });
 </script>
+
 </body>
 
 
