@@ -6,20 +6,43 @@ class MoviesController < ApplicationController
     @movies = Movie.all
   end
 
-  def sort_title
-    @movie.sort_title_ascending
-    format.html { redirect_to movie_url(@movie)}
+  def sort_title_ascending
+    @movies = Movie.all
+    @movies = Movie.order(:title)
+    render :index
   end
 
-  def sort_date
-    @movie.sort_date_ascending
-    format.html { redirect_to movie_url(@movie)}
+  def sort_title_descending
+    @movies = Movie.all
+    @movies = Movie.order(:title).reverse
+    render :index
   end
 
-  def sort_rating
-    @movie.sort_rating_ascending
-    format.html { redirect_to movie_url(@movie)}
+  def sort_rating_ascending
+    @movies = Movie.all
+    @movies = Movie.order(:rating)
+    render :index
   end
+
+  def sort_rating_descending
+    @movies = Movie.all
+    @movies = Movie.order(:rating).reverse
+    render :index
+  end
+
+  def sort_release_date_ascending
+    @movies = Movie.all
+    @movies = Movie.order(:release_date)
+    render :index
+  end
+
+  def sort_release_date_descending
+    @movies = Movie.all
+    @movies = Movie.order(:release_date).reverse
+    render :index
+  end
+
+
 
   # GET /movies/1 or /movies/1.json
   def show
