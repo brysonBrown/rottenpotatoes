@@ -48,17 +48,16 @@
           background-color: red;
       }
       .highlight-release_date-asc {
-          background-color: lightblue;
+          background-color: orange;
       }
       .highlight-release_date-desc {
           background-color: blue;
       }
     </style>
 </head>
-<body>
-    <p style="color: green"><%= notice %></p>
+<body style="background-color: lightblue">
 
-    <h1>Movies</h1>
+    <h1  style="display: block; color: white; background-color: lightblue; border: 2px solid">Movies</h1>
 
     <table id="moviesTable">
         <thead>
@@ -77,7 +76,7 @@
     </table>
 
     <!-- These are the links -->
-    <%= link_to "New movie", new_movie_path %>
+    <%= button_to "New movie", new_movie_path, method: :get %> <br>
 
     <!-- These are the buttons -->
     <%= button_to "Sort by Title Ascending", sort_title_ascending_path, method: :get %> <br>
@@ -87,7 +86,7 @@
     <%= button_to "Sort by Release Date Ascending", sort_release_date_ascending_path, method: :get %> <br>
     <%= button_to "Sort by Release Date Descending", sort_release_date_descending_path, method: :get %> <br>
 
-    <!-- JavaScript from chatGPT, highlights columns on button push. Prompts at the top-->
+    <!-- JavaScript from chatGPT, highlights columns on button push. Prompts at the top. I modified it so it would not highlight the header-->
     <!-- JavaScript code -->
       <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -152,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (highlightClass) {
             // Highlight header and add sort symbol
             document.querySelectorAll(`#moviesTable th[data-column="${column}"]`).forEach(header => {
-                header.classList.add(highlightClass);
+                //header.classList.add(highlightClass);
                 header.textContent += sortSymbol; // Append symbol directly
             });
 

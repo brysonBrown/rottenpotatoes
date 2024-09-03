@@ -1,10 +1,12 @@
-<p style="color: green"><%= notice %></p>
-
+<body style="background-color: red">
+<p style="color: white; font-size: 20px; display: block; border: 2px solid"><%= notice %>
 <%= render @movie %>
+</p>
 
 <div>
-  <%= link_to "Edit this movie", edit_movie_path(@movie) %> |
-  <%= link_to "Back to movies", movies_path %>
-
-  <%= button_to "Destroy this movie", @movie, method: :delete %>
+  <%= button_to "Destroy this movie", @movie, method: :delete %> <br>
+  <%= button_to "Edit this movie", edit_movie_path(@movie), method: :get%> <br>
+  <%= button_to "Back to movies", movies_path, method: :get%> <br>
 </div>
+
+</body>
