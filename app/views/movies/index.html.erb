@@ -88,108 +88,89 @@
 
     <!-- JavaScript from chatGPT, highlights columns on button push. Prompts at the top. I modified it so it would not highlight the header-->
     <!-- JavaScript code -->
-      <script>
-document.addEventListener('DOMContentLoaded', function() {
-    function getSortingInfo() {
-        const path = window.location.pathname;
-        console.log('URL Path:', path); // Log URL path for debugging
-        const match = path.match(/sort_(\w+)_([a-z]+)$/);
-        if (match) {
-            const column = match[1];
-            const direction = match[2];
-            console.log('Sorting Column:', column); // Log sorting column
-            console.log('Sorting Direction:', direction); // Log sorting direction
-            return { column, direction };
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function getSortingInfo() {
+            const path = window.location.pathname;
+            const match = path.match(/sort_(\w+)_([a-z]+)$/);
+            if (match) {
+                const column = match[1];
+                const direction = match[2];
+                return { column, direction };
+            }
+            return { column: null, direction: null };
         }
-        return { column: null, direction: null };
-    }
-
-    function updateHighlight(column, direction) {
-        let highlightClass = '';
-        let sortSymbol = '';
-        switch (column) {
-            case 'title':
-                highlightClass = direction === 'ascending' ? 'highlight-title-asc' : 'highlight-title-desc';
-                sortSymbol = direction === 'ascending' ? ' ^' : ' *';
-                break;
-            case 'rating':
-                highlightClass = direction === 'ascending' ? 'highlight-rating-asc' : 'highlight-rating-desc';
-                sortSymbol = direction === 'ascending' ? ' ^' : ' *';
-                break;
-            case 'release_date':
-                highlightClass = direction === 'ascending' ? 'highlight-release_date-asc' : 'highlight-release_date-desc';
-                sortSymbol = direction === 'ascending' ? ' ^' : ' *';
-                break;
-            default:
-                highlightClass = '';
-                sortSymbol = '';
-        }
-
-        console.log('Highlight Class:', highlightClass);
-        console.log('Sort Symbol:', sortSymbol);
-
-        // Remove existing highlight classes and symbols
-        document.querySelectorAll('#moviesTable th').forEach(header => {
-            header.classList.remove(
-                'highlight-title-asc', 'highlight-title-desc',
-                'highlight-rating-asc', 'highlight-rating-desc',
-                'highlight-release_date-asc', 'highlight-release_date-desc'
-            );
-            // Remove existing symbols
-            header.textContent = header.textContent.replace(/[\s^*]+$/, '');
-        });
-
-        document.querySelectorAll('#moviesTable td').forEach(cell => {
-            cell.classList.remove(
-                'highlight-title-asc', 'highlight-title-desc',
-                'highlight-rating-asc', 'highlight-rating-desc',
-                'highlight-release_date-asc', 'highlight-release_date-desc'
-            );
-        });
-
-        // Apply the class to the appropriate column header and cells
-        if (highlightClass) {
-            // Highlight header and add sort symbol
-            document.querySelectorAll(`#moviesTable th[data-column="${column}"]`).forEach(header => {
-                //header.classList.add(highlightClass);
-                header.textContent += sortSymbol; // Append symbol directly
+    
+        function updateHighlight(column, direction) {
+            let highlightClass = '';
+            let sortSymbol = '';
+            switch (column) {
+                case 'title':
+                    highlightClass = direction === 'ascending' ? 'highlight-title-asc' : 'highlight-title-desc';
+                    sortSymbol = direction === 'ascending' ? ' ^' : ' *';
+                    break;
+                case 'rating':
+                    highlightClass = direction === 'ascending' ? 'highlight-rating-asc' : 'highlight-rating-desc';
+                    sortSymbol = direction === 'ascending' ? ' ^' : ' *';
+                    break;
+                case 'release_date':
+                    highlightClass = direction === 'ascending' ? 'highlight-release_date-asc' : 'highlight-release_date-desc';
+                    sortSymbol = direction === 'ascending' ? ' ^' : ' *';
+                    break;
+                default:
+                    highlightClass = '';
+                    sortSymbol = '';
+            }
+    
+            // Remove existing highlights and symbols
+            document.querySelectorAll('#moviesTable th').forEach(header => {
+                header.className = header.className.replace(/highlight-\w+-\w+/g, ''); // Remove all highlight classes
+                header.textContent = header.textContent.replace(/[\s^*]+$/, ''); // Remove existing symbols
             });
-
-            // Determine the column index
-            const columnIndex = [...document.querySelectorAll('#moviesTable th')].findIndex(th => th.dataset.column === column) + 1;
-
-            // Highlight column cells using nth-child
-            document.querySelectorAll(`#moviesTable td:nth-child(${columnIndex})`).forEach(cell => {
-                cell.classList.add(highlightClass);
+    
+            document.querySelectorAll('#moviesTable td').forEach(cell => {
+                cell.className = cell.className.replace(/highlight-\w+-\w+/g, ''); // Remove all highlight classes
             });
+    
+            // Apply new highlight
+            if (highlightClass) {
+                document.querySelectorAll(`#moviesTable th[data-column="${column}"]`).forEach(header => {
+                    header.textContent += sortSymbol;
+                });
+    
+                const columnIndex = [...document.querySelectorAll('#moviesTable th')].findIndex(th => th.dataset.column === column) + 1;
+                document.querySelectorAll(`#moviesTable td:nth-child(${columnIndex})`).forEach(cell => {
+                    cell.classList.add(highlightClass);
+                });
+            }
         }
-    }
-
-    function applyHighlight() {
-        const { column, direction } = getSortingInfo();
-        updateHighlight(column, direction);
-    }
-
-    // Apply highlight on initial page load
-    applyHighlight();
-
-    // Handle URL changes manually if you use client-side routing or similar
-    window.addEventListener('popstate', applyHighlight);
-
-    // Handle AJAX navigation or URL changes
-    document.addEventListener('click', function(event) {
-        if (event.target.matches('button')) {
-            // Simulate a button click that changes the URL
-            setTimeout(applyHighlight, 100); // Adjust timeout if needed
+    
+        function applyHighlight() {
+            const { column, direction } = getSortingInfo();
+            updateHighlight(column, direction);
         }
+    
+        // Apply highlight on initial page load
+        applyHighlight();
+    
+        // Handle URL changes manually if you use client-side routing or similar
+        window.addEventListener('popstate', applyHighlight);
+    
+        // Handle AJAX navigation or URL changes
+        document.addEventListener('click', function(event) {
+            if (event.target.closest('button')) {
+                // Assuming buttons trigger URL change or sorting
+                setTimeout(applyHighlight, 100); // Adjust timeout if needed
+            }
+        });
+    
+        // Optional: Use MutationObserver to observe changes
+        // Uncomment if needed
+        // const observer = new MutationObserver(applyHighlight);
+        // observer.observe(document.body, { subtree: true, childList: true });
     });
-
-    // Optionally, use MutationObserver to observe changes
-    // Uncomment if needed
-    // const observer = new MutationObserver(applyHighlight);
-    // observer.observe(document.body, { subtree: true, childList: true });
-});
-</script>
+    </script>
+    
 
 </body>
 
