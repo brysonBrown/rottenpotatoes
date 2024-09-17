@@ -4,8 +4,9 @@
     <td> <%= movie.rating %> </td>
     <td> <%= movie.release_date %> </td>
     <td>
-        <%= link_to 'Show', movie_path(movie) %> |
-        <%= link_to 'Edit', edit_movie_path(movie) %> |
-        <%= link_to 'Destroy', movie_path(movie), method: :delete%>
+        
+        <%= link_to 'Show', movie_path(movie), method: :get %> |
+        <%= link_to 'Edit', edit_movie_path(movie), method: :get%> 
+        
     </td>
 </tr>
